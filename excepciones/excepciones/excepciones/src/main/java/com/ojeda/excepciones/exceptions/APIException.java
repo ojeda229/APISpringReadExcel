@@ -10,7 +10,7 @@ import lombok.Data;
 public class APIException extends RuntimeException{
     private List<String> detalles;
     private EnumExceptions enumExceptions;
-    public APIException(List<String> detalles , EnumExceptions enumExceptions) {
+    public APIException(List<String> detalles, EnumExceptions enumExceptions) {
         super(enumExceptions.getMensaje());
         this.detalles = detalles;
         this.enumExceptions = enumExceptions;
