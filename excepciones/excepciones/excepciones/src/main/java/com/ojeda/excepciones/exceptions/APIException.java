@@ -12,7 +12,7 @@ public class APIException extends RuntimeException{
     private EnumExceptions enumExceptions;
     public APIException(List<String> detalles, EnumExceptions enumExceptions) {
         super(enumExceptions.getMensaje());
-        this.detalles = detalles ;
+        this.detalles = detalles;
         this.enumExceptions = enumExceptions;
     } 
     
