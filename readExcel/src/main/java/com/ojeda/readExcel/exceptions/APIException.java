@@ -11,7 +11,7 @@ public class APIException extends RuntimeException{
     private List<String> detalles;
     private EnumExceptions enumExceptions;
     public APIException(List<String> detalles, EnumExceptions enumExceptions) {
-        super(enumExceptions.getMensaje());
+        super(detalles.toString());
         this.detalles = detalles;
         this.enumExceptions = enumExceptions;
     } 

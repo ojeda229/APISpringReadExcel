@@ -33,11 +33,11 @@ import lombok.AllArgsConstructor;
 public class ControladorTest {
     private GestionUsuariosServices gestionUsuariosServices;
     
-    @PostMapping(value = "/carga-masiva")
-    @ResponseStatus(value = HttpStatus.OK)
-    public GenericResponse<UsuariosDTO> registroMasivo( @RequestParam("archivo") @Valid @NotNull (message = "Es requerido") MultipartFile file) throws IOException{
-        System.out.println("EEEEEEEEEEEEEEEEEEEEEEEE");
-        System.err.println(file.getOriginalFilename());    
+    @PostMapping("/registroMasivo")
+    public GenericResponse<UsuariosDTO> registroMasivo(
+            @NotNull(message = "Es requerido") 
+            @Valid  
+            @RequestParam("archivo") MultipartFile file) throws IOException {
         return gestionUsuariosServices.registroMasivo(file);
     }
 }

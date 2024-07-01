@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import com.ojeda.readExcel.enums.EnumExceptions;
 
@@ -26,6 +27,7 @@ public class HandleException {
         ExceptionsDTO respuesta = new ExceptionsDTO(e.getEnumExceptions().getMensaje(),
                 e.getEnumExceptions().getCodigo(), e.getDetalles());
         ResponseEntity<ExceptionsDTO> responseException;
+
         switch (e.getEnumExceptions()) {
             case E400:
                 responseException = new ResponseEntity<ExceptionsDTO>(respuesta, HttpStatus.BAD_REQUEST);
@@ -49,7 +51,7 @@ public class HandleException {
             EnumExceptions.E400.getCodigo(),
             getErrors(e.getFieldErrors()));
         ResponseEntity<ExceptionsDTO> responseException;
-        return new ResponseEntity<ExceptionsDTO>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ExceptionsDTO>(respuesta, HttpStatus.BAD_REQUEST);
     }
 
 
@@ -60,10 +62,20 @@ public class HandleException {
             EnumExceptions.E400.getCodigo(),
             getErrors(e.getFieldErrors()));
         ResponseEntity<ExceptionsDTO> responseException;
+        return new ResponseEntity<ExceptionsDTO>(respuesta, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = { Exception.class })
+    public ResponseEntity<ExceptionsDTO> MultipartExceptionResponse(Exception e) {
+        ExceptionsDTO respuesta = new ExceptionsDTO(
+            EnumExceptions.E500.getMensaje(), 
+            EnumExceptions.E500.getCodigo(),
+            Collections.singletonList(e.getMessage()));
+        ResponseEntity<ExceptionsDTO> responseException;
         return new ResponseEntity<ExceptionsDTO>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
-
+    
     public List<String> getErrors(List<FieldError> errores ){
         List<String> detallesError = new ArrayList<>();
         for(FieldError error:errores){

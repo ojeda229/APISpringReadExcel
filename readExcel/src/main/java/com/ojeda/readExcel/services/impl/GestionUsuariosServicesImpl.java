@@ -32,31 +32,35 @@ public class GestionUsuariosServicesImpl implements GestionUsuariosServices {
         try{
             //File archivo = new File(doc);
             //FileInputStream byteArchivo = new FileInputStream("excepciones\\src\\docs\\test.xlsx"); 
+            if(!file.isEmpty()){
+                InputStream inputStream = file.getInputStream();
 
-
-            InputStream inputStream = file.getInputStream();
-
-            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            for(Row row: sheet){
-                if (row.getRowNum() != 0) {
-                    UsuarioDTO usuario = new UsuarioDTO();
-                    usuario.setNumeroEmpleado(getCellValueAsString(row.getCell(0)));
-                    usuario.setNombre(getCellValueAsString(row.getCell(1)));
-                    usuario.setApellidoPaterno(getCellValueAsString(row.getCell(2)));
-                    usuario.setApellidoMaterno(getCellValueAsString(row.getCell(3)));
-                    usuario.setPuesto(getCellValueAsString(row.getCell(4)));
-                    listUsuarios.add(usuario);
+                XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+                XSSFSheet sheet = workbook.getSheetAt(0);
+                for(Row row: sheet){
+                    if (row.getRowNum() != 0) {
+                        UsuarioDTO usuario = new UsuarioDTO();
+                        usuario.setNumeroEmpleado(getCellValueAsString(row.getCell(0)));
+                        usuario.setNombre(getCellValueAsString(row.getCell(1)));
+                        usuario.setApellidoPaterno(getCellValueAsString(row.getCell(2)));
+                        usuario.setApellidoMaterno(getCellValueAsString(row.getCell(3)));
+                        usuario.setPuesto(getCellValueAsString(row.getCell(4)));
+                        listUsuarios.add(usuario);
+                    }
                 }
+                UsuariosDTO usuarios = new UsuariosDTO(listUsuarios);
+                workbook.close();
+                return new GenericResponse<UsuariosDTO>(Constantes.MENSAJE_EXITO, usuarios);
+            }else{
+                List<String> detalles = Collections.singletonList("No se ha recibido un documento");
+                throw new APIException(detalles, EnumExceptions.E400);
             }
-            UsuariosDTO usuarios = new UsuariosDTO(listUsuarios);
-            workbook.close();
-            //byteArchivo.close();
-            return new GenericResponse<UsuariosDTO>(Constantes.MENSAJE_EXITO, usuarios);
         }catch(FileNotFoundException e){
             List<String> detalles = Collections.singletonList(e.getMessage());
             throw new APIException(detalles, EnumExceptions.E404);
-        }catch(Exception e){
+        }catch (APIException e){
+			throw e;
+		}catch(Exception e){
             List<String> detalles = Collections.singletonList(e.getMessage());
             throw new APIException(detalles, EnumExceptions.E500);
         }

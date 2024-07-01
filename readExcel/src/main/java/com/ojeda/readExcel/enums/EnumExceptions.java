@@ -5,22 +5,22 @@ import com.ojeda.readExcel.constantes.Constantes;
 public enum EnumExceptions {
     E400(
         Constantes.PROXY + "400",
-        Constantes.MENSAJE_ERROR + " Parámetros de entrada no válidos"
+        Constantes.MENSAJE_ERROR + ": Parámetros de entrada no válidos"
     ),
     
     E404(
         Constantes.PROXY + "404",
-        Constantes.MENSAJE_ERROR + " Recurso no encontrado"
+        Constantes.MENSAJE_ERROR + ": Recurso no encontrado"
     ),
 
     E401(
         Constantes.PROXY +"401",
-        Constantes.MENSAJE_ERROR + " No estás autorizado"
+        Constantes.MENSAJE_ERROR + ": No estás autorizado"
     ),
     
     E500(
         Constantes.PROXY +"500",
-        Constantes.MENSAJE_ERROR + " Error interno"
+        Constantes.MENSAJE_ERROR + ": Error interno"
     );
 
     private EnumExceptions(String codigo, String mensaje) {
