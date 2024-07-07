@@ -11,7 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import com.ojeda.readExcel.enums.EnumExceptions;
 
@@ -44,7 +44,7 @@ public class HandleException {
         return responseException;
     }
 
-    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
+    @ExceptionHandler(value = { MethodArgumentNotValidException.class})
     public ResponseEntity<ExceptionsDTO> MethodArgumentNotValidExceptionResponse(MethodArgumentNotValidException e) {
         ExceptionsDTO respuesta = new ExceptionsDTO(
             EnumExceptions.E400.getMensaje(), 
@@ -55,15 +55,7 @@ public class HandleException {
     }
 
 
-    @ExceptionHandler(value = { HttpMessageNotReadableException.class })
-    public ResponseEntity<ExceptionsDTO> HttpMessageNotReadableExceptionResponse(MethodArgumentNotValidException e) {
-        ExceptionsDTO respuesta = new ExceptionsDTO(
-            EnumExceptions.E400.getMensaje(), 
-            EnumExceptions.E400.getCodigo(),
-            getErrors(e.getFieldErrors()));
-        ResponseEntity<ExceptionsDTO> responseException;
-        return new ResponseEntity<ExceptionsDTO>(respuesta, HttpStatus.BAD_REQUEST);
-    }
+
     
     @ExceptionHandler(value = { Exception.class })
     public ResponseEntity<ExceptionsDTO> MultipartExceptionResponse(Exception e) {

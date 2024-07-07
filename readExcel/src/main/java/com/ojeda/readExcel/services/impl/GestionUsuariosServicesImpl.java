@@ -1,6 +1,5 @@
 package com.ojeda.readExcel.services.impl;
 
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -30,34 +29,35 @@ public class GestionUsuariosServicesImpl implements GestionUsuariosServices {
     public GenericResponse<UsuariosDTO> registroMasivo(MultipartFile file) { 
         List<UsuarioDTO> listUsuarios= new ArrayList<>();
         try{
-            //File archivo = new File(doc);
-            //FileInputStream byteArchivo = new FileInputStream("excepciones\\src\\docs\\test.xlsx"); 
             if(!file.isEmpty()){
-                InputStream inputStream = file.getInputStream();
-
-                XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
-                XSSFSheet sheet = workbook.getSheetAt(0);
-                for(Row row: sheet){
-                    if (row.getRowNum() != 0) {
-                        UsuarioDTO usuario = new UsuarioDTO();
-                        usuario.setNumeroEmpleado(getCellValueAsString(row.getCell(0)));
-                        usuario.setNombre(getCellValueAsString(row.getCell(1)));
-                        usuario.setApellidoPaterno(getCellValueAsString(row.getCell(2)));
-                        usuario.setApellidoMaterno(getCellValueAsString(row.getCell(3)));
-                        usuario.setPuesto(getCellValueAsString(row.getCell(4)));
-                        listUsuarios.add(usuario);
+                String nameFile = file.getOriginalFilename();
+                String[] extension = nameFile.split("\\.");
+                if(validarExtension(Constantes.EXTENSION_DOC , extension[1])){
+                    InputStream inputStream = file.getInputStream();
+                    XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+                    XSSFSheet sheet = workbook.getSheetAt(0);
+                    for(Row row: sheet){
+                        if (row.getRowNum() != 0) {
+                            UsuarioDTO usuario = new UsuarioDTO();
+                            usuario.setNumeroEmpleado(getCellValueAsString(row.getCell(0)));
+                            usuario.setNombre(getCellValueAsString(row.getCell(1)));
+                            usuario.setApellidoPaterno(getCellValueAsString(row.getCell(2)));
+                            usuario.setApellidoMaterno(getCellValueAsString(row.getCell(3)));
+                            usuario.setPuesto(getCellValueAsString(row.getCell(4)));
+                            listUsuarios.add(usuario);
+                        }
                     }
+                    UsuariosDTO usuarios = new UsuariosDTO(listUsuarios);
+                    workbook.close();
+                    return new GenericResponse<UsuariosDTO>(Constantes.MENSAJE_EXITO, usuarios);
+                }else{
+                    List<String> detalles = Collections.singletonList("La extensión del documento no es la correcta");
+                    throw new APIException(detalles, EnumExceptions.E400);
                 }
-                UsuariosDTO usuarios = new UsuariosDTO(listUsuarios);
-                workbook.close();
-                return new GenericResponse<UsuariosDTO>(Constantes.MENSAJE_EXITO, usuarios);
             }else{
                 List<String> detalles = Collections.singletonList("No se ha recibido un documento");
                 throw new APIException(detalles, EnumExceptions.E400);
             }
-        }catch(FileNotFoundException e){
-            List<String> detalles = Collections.singletonList(e.getMessage());
-            throw new APIException(detalles, EnumExceptions.E404);
         }catch (APIException e){
 			throw e;
 		}catch(Exception e){
@@ -65,6 +65,17 @@ public class GestionUsuariosServicesImpl implements GestionUsuariosServices {
             throw new APIException(detalles, EnumExceptions.E500);
         }
     }
+
+    private static boolean validarExtension(String[] extensiones, String extension) {
+        for (int i = 0; i < extensiones.length; i++) {
+            if (extensiones[i].equals(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     private String getCellValueAsString(Cell cell) {
         if (cell == null) {

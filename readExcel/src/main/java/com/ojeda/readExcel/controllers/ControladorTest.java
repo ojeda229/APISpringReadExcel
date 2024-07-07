@@ -1,25 +1,18 @@
 package com.ojeda.readExcel.controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ojeda.readExcel.constantes.Constantes;
 import com.ojeda.readExcel.dto.UsuariosDTO;
-import com.ojeda.readExcel.dto.registry.CargaMasivaRegistry;
-import com.ojeda.readExcel.enums.EnumExceptions;
-import com.ojeda.readExcel.exceptions.APIException;
+import com.ojeda.readExcel.dto.registry.DocumentRegistry;
 import com.ojeda.readExcel.model.GenericResponse;
 import com.ojeda.readExcel.services.GestionUsuariosServices;
 
@@ -33,11 +26,10 @@ import lombok.AllArgsConstructor;
 public class ControladorTest {
     private GestionUsuariosServices gestionUsuariosServices;
     
-    @PostMapping("/registroMasivo")
+    @PostMapping(value = "/registroMasivo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public GenericResponse<UsuariosDTO> registroMasivo(
-            @NotNull(message = "Es requerido") 
-            @Valid  
-            @RequestParam("archivo") MultipartFile file) throws IOException {
-        return gestionUsuariosServices.registroMasivo(file);
+            @NotNull(message = Constantes.MENSAJE_VALIDATION + " archivo") 
+            @Valid @RequestParam("archivo") MultipartFile archivo) {
+        return gestionUsuariosServices.registroMasivo(archivo);
     }
 }
